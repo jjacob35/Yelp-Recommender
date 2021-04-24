@@ -6,6 +6,7 @@ decorator==4.4.2
 dill==0.3.3
 Flask==1.1.2
 Flask-Cors==3.0.10
+greenlet==1.0.0
 ipykernel==5.3.4
 ipython==7.18.1
 ipython-genutils==0.2.0
@@ -19,6 +20,7 @@ MarkupSafe==1.1.1
 numpy==1.19.2
 olefile==0.46
 pandas==1.2.3
+pandasql==0.7.3
 parso==0.8.0
 pexpect==4.8.0
 pickleshare==0.7.5
@@ -34,6 +36,7 @@ scikit-learn==0.22.1
 scikit-surprise==1.1.1
 scipy==1.4.1
 six==1.15.0
+SQLAlchemy==1.4.11
 torch==1.8.1
 torchvision==0.9.1
 tornado==6.0.4

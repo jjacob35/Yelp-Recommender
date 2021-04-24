@@ -8,19 +8,22 @@ import pandas as pd
 import torch
 import torch.nn as nn
 import os
-
+import urllib.request
+import pandas as pd
+import pandasql as ps
 
 LOG = logging.getLogger(__name__)
 
 main = Blueprint('main', __name__)
 
-
 REC = YelpRecommender()
+
 
 @main.route('/')
 def inital_load():
     # return 'Hi, the server is up and running'
     return render_template('index.html')
+
 
 
 # I don't think we need the following route, we should just let the model use the path to the filtered csv dataset
@@ -36,6 +39,7 @@ def inital_load():
 @main.route('/api/trainModel')
 def train():
     return 'Hello'
+
 
 # Endpoint to get Recommendation for a Group of Users of an item in a list of items
 # Inputs:
@@ -53,36 +57,59 @@ def train():
 def getrecs():
     users = request.args.get('users').split(',')
     items = request.args.get('items').split(',')
-    user_ndxs = le.transform(users) # Get the user index
-    item_ndxs = le_item.transform(items) # Get the item index
-    #payload is inital parameters
+    user_ndxs = le.transform(users)  # Get the user index
+    item_ndxs = le_item.transform(items)  # Get the item index
+    # payload is inital parameters
     item, rating = REC.getRecommendation(user_ndxs, item_ndxs)
     print(le_item.inverse_transform([item]).item())
     return "%s,%.2f" % (le_item.inverse_transform([item]).item(), rating)
 
 
-# returns details of a restaurant
+# Endpoint to get Details for a Resturant
+# Inputs:
+#    business_id -> business_id
+# Returns:
+#    JSON with specific details on that business
+# Example:
+#    inputs:
+#       business_id: "BYI0T3QhmYC1Y3fvxnXukg"
 @main.route('/api/getRestaurantDetails', methods=['GET', 'POST'])
 def get_details():
     # payload is resturant business id
-    json_data = open('api/yelp_academic_dataset_business.json')
-    counter = 0
     business_id = request.args.get('business_id')
 
-    # temp_business_id = 'BYI0T3QhmYC1Y3fvxnXukg'
+    data = pd.read_csv('data/business_list.csv')
+    counter = 0
+
     found = False
-
-    for item in json_data:
-        jdata = json.loads(item)
-        #print(jdata['business_id'])
-        if jdata['business_id'] == business_id:
-            found = True
-            break
-        counter += 1
-
-    if not found:
+    q1 = """SELECT * FROM data WHERE business_id = '{}' """.format(business_id)
+    result = ps.sqldf(q1, locals())
+    json_result = result.to_json()
+    if result.shape[0] == 0:
         return 'Cannot find details for that business_id'
 
-    print(item)
+    return json_result
 
-    return item
+
+# Endpoint to get All Valid Locations For A specific zip-code
+# Inputs:
+#    zip-code -> zip-code
+# Returns:
+#    JSON with a bunch of resturant business IDs
+# Example:
+#    inputs:
+#       business_id: 30305
+@main.route('/api/getLocationsBasedOnZipcode', methods=['GET', 'POST'])
+def getLocations():
+    zipcode = request.args.get('zipcode')
+
+    data = pd.read_csv('data/business_list.csv')
+    q1 = """SELECT * FROM data WHERE postal_code = '{}' """.format(zipcode)
+
+    result = ps.sqldf(q1, locals())
+    result = result['business_id']
+    json_result = result.to_json()
+    if result.shape[0] == 0:
+        return 'Cannot find Enough Locations for that Zipcode'
+
+    return json_result
