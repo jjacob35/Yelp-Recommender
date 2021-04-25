@@ -43,7 +43,7 @@ body { margin: 0; padding: 0; }
 
         itemList = ""
 
-        axios.get('http://127.0.0.1:5000/api/getLocationsBasedOnZipcode', {
+        axios.get('http://3.235.163.7:5000/api/getLocationsBasedOnZipcode', {
           params: {
             zipcode: zip
           }
@@ -62,14 +62,14 @@ body { margin: 0; padding: 0; }
 
 
             n_results = 5
-            axios.get('http://127.0.0.1:5000/api/getReccomendations', {
+            axios.get('http://3.235.163.7:5000/api/getReccomendations', {
               params: {
                 users: names,//"b_-AmmH9I3lvhU7PANjFrw,OhOgtmlIWSmikT25wcWBpA,8q7-9Lv6NTlOLqnm5Yk0hg,94u9RZbO2AKAGV-sXLjX4w",
                 items: itemList,
                 n: n_results
               }
             }).then(function (response2) {
-                // console.log(response2["data"]);
+                console.log(response2["data"]);
                 recs = response2["data"]
 
                 function sort_object(obj) {
@@ -110,7 +110,7 @@ body { margin: 0; padding: 0; }
                   // console.log(recs[key]["longitude"][0])
                   var marker1 = new mapboxgl.Marker({color: colorList[colorIndex]})
                     .setLngLat([recs[key]["longitude"][0], recs[key]["latitude"][0]])
-                    .setPopup(new mapboxgl.Popup().setHTML("<h1>"+ recs[key]["name"][0] + "</h1>"))
+                    .setPopup(new mapboxgl.Popup().setHTML("<h1>"+ recs[key]["name"][0] + "</h1>" + "<h3>" + recs[key]["address"][0] + "</h3>"))
                     .addTo(map);
                   colorIndex++;
                 }
