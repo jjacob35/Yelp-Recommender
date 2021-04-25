@@ -22,7 +22,7 @@ REC = YelpRecommender()
 @main.route('/')
 def inital_load():
     # return 'Hi, the server is up and running'
-    return render_template('index.html')
+    return render_template('../templates/index.html')
 
 
 
