@@ -68,13 +68,16 @@ class YelpRecommender:
     # Iterates through all items and predicts what the group embedding would rate an item and returns max item and predicted rating
     def getRecommendation(self, groupUserIDs, listofItems):
         userIDsTensor = torch.LongTensor(groupUserIDs)
-        maxItem = -1
-        maxRating = float('-inf')
+        # maxItem = -1
+        # maxRating = float('-inf')
+        itemratingtuples = []
         for item in listofItems:
             itemTensor = torch.LongTensor([item])
             pred = self.getGroupEmbed(userIDsTensor, itemTensor).item()
-            if pred > maxRating:
-                maxRating = pred
-                maxItem = item
-        return (maxItem, maxRating)
+            itemratingtuples.append((item, pred))
+            # if pred > maxRating:
+            #     maxRating = pred
+            #     maxItem = item
+        itemratingtuples = sorted(itemratingtuples, key=lambda x: x[1], reverse=True)
+        return itemratingtuples#(maxItem, maxRating)
 # =================================================================

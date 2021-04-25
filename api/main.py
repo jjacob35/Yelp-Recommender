@@ -54,25 +54,33 @@ def train():
 def getrecs():
     users = request.args.get('users').split(',')
     items = request.args.get('items').split(',')
+    numRes = int(request.args.get('n'))
     user_ndxs = le.transform(users)  # Get the user index
     item_ndxs = le_item.transform(items)  # Get the item index
     # payload is inital parameters
-    item, rating = REC.getRecommendation(user_ndxs, item_ndxs)
-    print(le_item.inverse_transform([item]).item())
-
-    new_business_id = le_item.inverse_transform([item]).item()
+    recs = REC.getRecommendation(user_ndxs, item_ndxs)
+    # item, rating = REC.getRecommendation(user_ndxs, item_ndxs)
+    # print(le_item.inverse_transform([item]).item())
     data = pd.read_csv('data/business_list.csv')
-    q1 = """SELECT * FROM data WHERE business_id = '{}' """.format(new_business_id)
-    result = ps.sqldf(q1, locals())
-    json_result = result.to_dict()
-    print(json_result)
+    out_json = {}
+    for i in range(numRes):
+        if i == len(recs):
+            break
+        item, rating = recs[i]
+        new_business_id = le_item.inverse_transform([item]).item()
+        q1 = """SELECT * FROM data WHERE business_id = '{}' """.format(new_business_id)
+        result = ps.sqldf(q1, locals())
+        json_result = result.to_dict()
+        json_result["reccomendation_level"] = float(rating)
+        out_json[new_business_id] = json_result
+    print(out_json)
 
-    json_result_dict = {}
-    json_result_dict["info"] = json_result
-    json_result["reccomendation_level"] = float(rating)
+    # json_result_dict = {}
+    # json_result_dict["info"] = json_result
+    # json_result["reccomendation_level"] = float(rating)
 
 
-    return json_result
+    return str(out_json)
 
 
 # Endpoint to get Details for a Resturant
