@@ -42,13 +42,15 @@ body { margin: 0; padding: 0; }
           method: 'GET',
           redirect: 'follow'
         };
-
-        fetch("http://127.0.0.1:5000/api/getLocationsBasedOnZipcode?zipcode=" + zip, requestOptions)
+        console.log("3.239.19.207:5000/api/getLocationsBasedOnZipcode?zipcode=" + zip)
+        fetch("3.239.19.207:5000/api/getLocationsBasedOnZipcode?zipcode=" + zip, requestOptions)
           .then(response => response.text())
           .then(result => console.log(result))
           .catch(error => console.log('error', error));
-        // then hard-code a list of users
 
+        document.getElementById("searchConfirmation").innerHTML = result
+        // then hard-code a list of users
+        users = "b_-AmmH9I3lvhU7PANjFrw,OhOgtmlIWSmikT25wcWBpA,8q7-9Lv6NTlOLqnm5Yk0hg,94u9RZbO2AKAGV-sXLjX4w"
         // then call api/getReccomendations
 
         // then call api/getRestaurantDetails
