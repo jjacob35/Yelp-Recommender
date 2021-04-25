@@ -64,7 +64,7 @@ def getrecs():
     # item, rating = REC.getRecommendation(user_ndxs, item_ndxs)
     # print(le_item.inverse_transform([item]).item())
     # data = pd.read_csv('data/business_list.csv')
-    preds_list = list(recs.reshape((1,7))[0])
+    preds_list = list(recs.reshape((1,len(item_ndxs)))[0])
     business_rating = []
     for i in range(len(preds_list)):
         business_rating.append((items[i], preds_list[i]))
