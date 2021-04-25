@@ -71,7 +71,7 @@ def getrecs():
     business_rating = []
     for i in range(len(preds_list)):
         business_rating.append((items[i], preds_list[i]))
-    
+
     business_rating = sorted(business_rating, key=lambda x:x[1], reverse=True)
 
     out_json = {}
@@ -85,14 +85,14 @@ def getrecs():
         json_result = result.to_dict()
         json_result["reccomendation_level"] = float(rating)
         out_json[new_business_id] = json_result
-    print(out_json)
+    # print(out_json)
 
     # json_result_dict = {}
     # json_result_dict["info"] = json_result
     # json_result["reccomendation_level"] = float(rating)
 
 
-    return str(out_json)
+    return out_json
 
 
 # Endpoint to get Details for a Resturant

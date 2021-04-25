@@ -52,24 +52,41 @@ body { margin: 0; padding: 0; }
               // console.log(key, data[key]);
               itemList = itemList + data[key] + ",";
             }
-            console.log(typeof itemList)
+            // console.log(typeof itemList)
             itemList = itemList.slice(0, -1)
 
         // then call api/getReccomendations
-            // userList = "b_-AmmH9I3lvhU7PANjFrw,OhOgtmlIWSmikT25wcWBpA,8q7-9Lv6NTlOLqnm5Yk0hg,94u9RZbO2AKAGV-sXLjX4w";
-            // axios.get('http://3.218.207.187:5000/api/getReccomendations' + "?items" + itemList + "&users=" + userList + "&n=3")
-            //   .then(function (response2) {
-            //     console.log(response2)
-            //   })
+            n_results = 5
             axios.get('http://127.0.0.1:5000/api/getReccomendations', {
               params: {
                 users: "b_-AmmH9I3lvhU7PANjFrw,OhOgtmlIWSmikT25wcWBpA,8q7-9Lv6NTlOLqnm5Yk0hg,94u9RZbO2AKAGV-sXLjX4w",
                 items: itemList,
-                n:3
+                n: n_results
               }
             }).then(function (response2) {
-                console.log(response2);
+                console.log(response2["data"]);
+                recs = response2["data"]
 
+                mapboxgl.accessToken = 'pk.eyJ1IjoianBoaWxpcG9zZTMiLCJhIjoiY2tuM3k2dTBmMWM2MTJwbzhsZzQwMXN4aCJ9.uGgJiraPNEWlG0d25SYJLg';
+                var map = new mapboxgl.Map({
+                  container: 'map', // container id
+                  style: 'mapbox://styles/mapbox/streets-v11', // style URL
+                  center: [-84.389400, 33.776810], // starting position [lng, lat]
+                  zoom: 13 // starting zoom
+                });
+
+                colorList = ["#39A96B", "#56B870", "#74C67A", "#99D492", "#BFE1B0"];
+                colorIndex = 0;
+                for (let key in recs) {
+                  // console.log(recs[key]["longitude"][0])
+                  var marker1 = new mapboxgl.Marker({color: colorList[colorIndex]})
+                    .setLngLat([recs[key]["longitude"][0], recs[key]["latitude"][0]])
+                    .setPopup(new mapboxgl.Popup().setHTML("<h1>"+ recs[key]["name"][0] + "</h1>"))
+                    .addTo(map);
+                  colorIndex++;
+                }
+
+                document.getElementById("searchConfirmation").innerHTML = "Displaying recommendations for " + zip + ".";
             })
 
         })
