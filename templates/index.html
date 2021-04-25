@@ -41,7 +41,7 @@ body { margin: 0; padding: 0; }
 
         itemList = ""
 
-        axios.get('http://3.218.207.187:5000/api/getLocationsBasedOnZipcode', {
+        axios.get('http://127.0.0.1:5000/api/getLocationsBasedOnZipcode', {
           params: {
             zipcode: zip
           }
@@ -53,26 +53,24 @@ body { margin: 0; padding: 0; }
               itemList = itemList + data[key] + ",";
             }
             console.log(typeof itemList)
+            itemList = itemList.slice(0, -1)
 
         // then call api/getReccomendations
-            userList = "b_-AmmH9I3lvhU7PANjFrw,OhOgtmlIWSmikT25wcWBpA,8q7-9Lv6NTlOLqnm5Yk0hg,94u9RZbO2AKAGV-sXLjX4w";
-            axios.get('http://3.218.207.187:5000/api/getReccomendations' + "?items" + itemList + "&users=" + userList + "&n=3")
-              .then(function (response2) {
-                console.log(response2)
-              })
-            // axios.get('http://3.218.207.187:5000/api/getReccomendations', {
-            //   params: {
-            //     items: itemList,
-            //     users: "b_-AmmH9I3lvhU7PANjFrw,OhOgtmlIWSmikT25wcWBpA,8q7-9Lv6NTlOLqnm5Yk0hg,94u9RZbO2AKAGV-sXLjX4w",
-            //     n:3
-            //   }
-            // }).then(function (response2) {
-            //     console.log(response2);
-            //
-            // })
+            // userList = "b_-AmmH9I3lvhU7PANjFrw,OhOgtmlIWSmikT25wcWBpA,8q7-9Lv6NTlOLqnm5Yk0hg,94u9RZbO2AKAGV-sXLjX4w";
+            // axios.get('http://3.218.207.187:5000/api/getReccomendations' + "?items" + itemList + "&users=" + userList + "&n=3")
+            //   .then(function (response2) {
+            //     console.log(response2)
+            //   })
+            axios.get('http://127.0.0.1:5000/api/getReccomendations', {
+              params: {
+                users: "b_-AmmH9I3lvhU7PANjFrw,OhOgtmlIWSmikT25wcWBpA,8q7-9Lv6NTlOLqnm5Yk0hg,94u9RZbO2AKAGV-sXLjX4w",
+                items: itemList,
+                n:3
+              }
+            }).then(function (response2) {
+                console.log(response2);
 
-
-
+            })
 
         })
 
