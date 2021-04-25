@@ -125,4 +125,4 @@ def getLocations():
     if result.shape[0] == 0:
         return 'Cannot find Enough Locations for that Zipcode'
 
-    return json_result
+    render_template('../templates/zipcodeResults.html')
