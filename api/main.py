@@ -19,6 +19,7 @@ main = Blueprint('main', __name__)
 REC = YelpRecommender()
 
 data = pd.read_csv('data/business_list.csv')
+name_map = pd.read_csv('data/list_of_names.csv')
 
 
 @main.route('/')
@@ -57,7 +58,8 @@ def train():
 #       recommendation: "0ja9ouEv_w8FWe1F5KMS4g,3.30"
 @main.route('/api/getReccomendations', methods=['GET', 'POST'])
 def getrecs():
-    users = request.args.get('users').split(',')
+    users_names = request.args.get('users').split(',')
+    users = [list(name_map.loc[name_map['name'] == name]["userID"])[0] for name in users_names]
     items = request.args.get('items').split(',')
     numRes = int(request.args.get('n'))
     user_ndxs = le.transform(users)  # Get the user index
@@ -73,7 +75,7 @@ def getrecs():
         business_rating.append((items[i], preds_list[i]))
 
     business_rating = sorted(business_rating, key=lambda x:x[1], reverse=True)
-
+    print(business_rating)
     out_json = {}
     for i in range(numRes):
         if i == len(business_rating):
