@@ -14,7 +14,7 @@ body { margin: 0; padding: 0; }
 </style>
 </head>
 <body>
-  <center><h3>CSE 6242 Final Project - Yelp-Trained Restaurant Recommendations</h3></center>
+  <center><h1>CSE 6242 Final Project - Team 29 - Group Yelp Recommender</h1><h3>Trying to find interesting local businesses? Have a group of people who can never agree on where to go? We've been there and that's why we've built the Group Yelp Recommender. It uses a Deep Learning based Recommender System to recommend businesses in a zip code that are most likely to be enjoyed by the whole group. The model is trained on the items users have rated in the past and uses this to get a sense of a user's preferences. Our system takes this further and combines multiple user representations to form a group representation and finds businesses the entire group will like. Go ahead, give it a whirl! The darker green pin represents a stronger recommednation.</h3></center>
   <!-- <form action="http://3.239.19.207:5000/api/getLocationsBasedOnZipcode" method="get"> -->
   <form onsubmit="return updateMap()" id="zipForm">
     <label for="zipcode">Enter the zipcode you would like to search in:</label>
@@ -25,7 +25,8 @@ body { margin: 0; padding: 0; }
   </form>
 
   <div id="searchConfirmation" class="indent"></div>
-
+  <br />
+  <br />
   <div id="map"></div>
   <script>
   	  mapboxgl.accessToken = 'pk.eyJ1IjoianBoaWxpcG9zZTMiLCJhIjoiY2tuM3k2dTBmMWM2MTJwbzhsZzQwMXN4aCJ9.uGgJiraPNEWlG0d25SYJLg';
@@ -51,7 +52,7 @@ body { margin: 0; padding: 0; }
             // console.log(response);
             data = response["data"]
             for (let key in data) {
-              // console.log(key, data[key]);
+              console.log(key, data[key]);
               itemList = itemList + data[key] + ",";
             }
             // console.log(typeof itemList)
@@ -116,6 +117,13 @@ body { margin: 0; padding: 0; }
                 }
 
                 document.getElementById("searchConfirmation").innerHTML = "Displaying the top 5 recommendations for " + zip + ".";
+            })
+            .catch(function (error) {
+              if (error.response) {
+                console.log(error.response.data);
+                alert("Something went wrong. Please try a new query")
+                document.getElementById("searchConfirmation").innerHTML = "Something went wrong displaying the top 5 recommendations for " + zip + ". Try a different query.";
+              }
             })
 
         })
