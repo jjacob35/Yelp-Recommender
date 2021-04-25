@@ -7,6 +7,7 @@
 <link href="https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.css" rel="stylesheet">
 <link rel="stylesheet" href="../static/main.css">
 <script src="https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <style>
 body { margin: 0; padding: 0; }
 #map { position: absolute; top: 20%; left:10%; height: 50%; width: 50%; }
@@ -14,8 +15,8 @@ body { margin: 0; padding: 0; }
 </head>
 <body>
   <center><h3>CSE 6242 Final Project - Yelp-Trained Restaurant Recommendations</h3></center>
-  <form action="http://3.239.19.207:5000/api/getLocationsBasedOnZipcode" method="get">
-  <!-- <form onsubmit="return updateMap()" method="get" id="zipForm"> -->
+  <!-- <form action="http://3.239.19.207:5000/api/getLocationsBasedOnZipcode" method="get"> -->
+  <form onsubmit="return updateMap()" id="zipForm">
     <label for="zipcode">Enter the zipcode you would like to search in:</label>
     <input type="text" id="zipcode" name="zipcode"><br><br>
     <button type="submit">Submit</button>
@@ -33,39 +34,61 @@ body { margin: 0; padding: 0; }
         zoom: 9 // starting zoom
       });
 
-      // function updateMap() {
-      //   // first call api/getLocationsBasedOnZipcode to get resturants
-      //   var zip = document.getElementById("zipForm").elements[0].value;
-      //   document.getElementById("searchConfirmation").innerHTML = "Displaying recommendations for " + zip;
-      //
-      //   var requestOptions = {
-      //     method: 'GET',
-      //     redirect: 'follow'
-      //   };
-      //   console.log("3.239.19.207:5000/api/getLocationsBasedOnZipcode?zipcode=" + zip)
-      //   fetch("3.239.19.207:5000/api/getLocationsBasedOnZipcode?zipcode=" + zip, requestOptions)
-      //     .then(response => response.text())
-      //     .then(result => console.log(result))
-      //     .catch(error => console.log('error', error));
-      //
-      //   document.getElementById("searchConfirmation").innerHTML = result
-      //   // then hard-code a list of users
-      //   users = "b_-AmmH9I3lvhU7PANjFrw,OhOgtmlIWSmikT25wcWBpA,8q7-9Lv6NTlOLqnm5Yk0hg,94u9RZbO2AKAGV-sXLjX4w"
-      //   // then call api/getReccomendations
-      //
-      //   // then call api/getRestaurantDetails
-      //
-      //   // now update map with location markers and new center
-      //   mapboxgl.accessToken = 'pk.eyJ1IjoianBoaWxpcG9zZTMiLCJhIjoiY2tuM3k2dTBmMWM2MTJwbzhsZzQwMXN4aCJ9.uGgJiraPNEWlG0d25SYJLg';
-      //   var map = new mapboxgl.Map({
-      //     container: 'map', // container id
-      //     style: 'mapbox://styles/mapbox/streets-v11', // style URL
-      //     center: [-84.389400, 33.776810], // starting position [lng, lat]
-      //     zoom: 11 // starting zoom
-      //   });
-      //   return false; // need to return false to prevent page refresh
-      //
-      // }
+      function updateMap() {
+        // first call api/getLocationsBasedOnZipcode to get resturants
+        var zip = document.getElementById("zipForm").elements[0].value;
+        document.getElementById("searchConfirmation").innerHTML = "Generating recommendations for " + zip + "... this may take a while.";
+
+        itemList = ""
+
+        axios.get('http://3.218.207.187:5000/api/getLocationsBasedOnZipcode', {
+          params: {
+            zipcode: zip
+          }
+        }).then(function (response) {
+            // console.log(response);
+            data = response["data"]
+            for (let key in data) {
+              // console.log(key, data[key]);
+              itemList = itemList + data[key] + ",";
+            }
+            console.log(typeof itemList)
+
+        // then call api/getReccomendations
+            userList = "b_-AmmH9I3lvhU7PANjFrw,OhOgtmlIWSmikT25wcWBpA,8q7-9Lv6NTlOLqnm5Yk0hg,94u9RZbO2AKAGV-sXLjX4w";
+            axios.get('http://3.218.207.187:5000/api/getReccomendations' + "?items" + itemList + "&users=" + userList + "&n=3")
+              .then(function (response2) {
+                console.log(response2)
+              })
+            // axios.get('http://3.218.207.187:5000/api/getReccomendations', {
+            //   params: {
+            //     items: itemList,
+            //     users: "b_-AmmH9I3lvhU7PANjFrw,OhOgtmlIWSmikT25wcWBpA,8q7-9Lv6NTlOLqnm5Yk0hg,94u9RZbO2AKAGV-sXLjX4w",
+            //     n:3
+            //   }
+            // }).then(function (response2) {
+            //     console.log(response2);
+            //
+            // })
+
+
+
+
+        })
+
+
+
+        // now update map with location markers and new center
+        mapboxgl.accessToken = 'pk.eyJ1IjoianBoaWxpcG9zZTMiLCJhIjoiY2tuM3k2dTBmMWM2MTJwbzhsZzQwMXN4aCJ9.uGgJiraPNEWlG0d25SYJLg';
+        var map = new mapboxgl.Map({
+          container: 'map', // container id
+          style: 'mapbox://styles/mapbox/streets-v11', // style URL
+          center: [-84.389400, 33.776810], // starting position [lng, lat]
+          zoom: 11 // starting zoom
+        });
+        return false; // need to return false to prevent page refresh
+
+      }
   </script>
 
   <div>

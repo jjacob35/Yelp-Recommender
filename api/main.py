@@ -21,8 +21,8 @@ REC = YelpRecommender()
 
 @main.route('/')
 def inital_load():
-    # return 'Hi, the server is up and running'
-    return render_template('../templates/index.html')
+    return 'Hi, the server is up and running'
+    # return render_template('../templates/index.html')
 
 
 
@@ -125,4 +125,4 @@ def getLocations():
     if result.shape[0] == 0:
         return 'Cannot find Enough Locations for that Zipcode'
 
-    render_template('../templates/zipcodeResults.html')
+    return json_result
