@@ -10,7 +10,7 @@
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <style>
 body { margin: 0; padding: 0; }
-#map { position: absolute; top: 20%; left:10%; height: 50%; width: 50%; }
+#map { position: absolute; top: 30%; left:10%; height: 50%; width: 50%; }
 </style>
 </head>
 <body>
@@ -19,6 +19,8 @@ body { margin: 0; padding: 0; }
   <form onsubmit="return updateMap()" id="zipForm">
     <label for="zipcode">Enter the zipcode you would like to search in:</label>
     <input type="text" id="zipcode" name="zipcode"><br><br>
+    <label for="names">Enter your names for personalized results:</label>
+    <input type="text" id="names" name="names"><br><br>
     <button type="submit">Submit</button>
   </form>
 
@@ -56,28 +58,55 @@ body { margin: 0; padding: 0; }
             itemList = itemList.slice(0, -1)
 
         // then call api/getReccomendations
+            var names = document.getElementById("zipForm").elements[1].value;
+
+
             n_results = 5
             axios.get('http://127.0.0.1:5000/api/getReccomendations', {
               params: {
-                users: "b_-AmmH9I3lvhU7PANjFrw,OhOgtmlIWSmikT25wcWBpA,8q7-9Lv6NTlOLqnm5Yk0hg,94u9RZbO2AKAGV-sXLjX4w",
+                users: names,//"b_-AmmH9I3lvhU7PANjFrw,OhOgtmlIWSmikT25wcWBpA,8q7-9Lv6NTlOLqnm5Yk0hg,94u9RZbO2AKAGV-sXLjX4w",
                 items: itemList,
                 n: n_results
               }
             }).then(function (response2) {
-                console.log(response2["data"]);
+                // console.log(response2["data"]);
                 recs = response2["data"]
 
+                function sort_object(obj) {
+                    items = Object.keys(obj).map(function(key) {
+                        return [key, obj[key]["reccomendation_level"]];
+                    });
+                    items.sort(function(first, second) {
+                        return second[1] - first[1];
+                    });
+                    return items
+                }
+
+                sorted_recs = sort_object(recs)
+                // console.log(sorted_recs)
+
+                lon = -84.389400;
+                lat = 33.776810
+                for (let k in sorted_recs) {
+                  key = sorted_recs[k][0]
+                  // console.log(key)
+                  lon = recs[key]["longitude"][0]
+                  lat = recs[key]["latitude"][0]
+                  break
+                }
                 mapboxgl.accessToken = 'pk.eyJ1IjoianBoaWxpcG9zZTMiLCJhIjoiY2tuM3k2dTBmMWM2MTJwbzhsZzQwMXN4aCJ9.uGgJiraPNEWlG0d25SYJLg';
                 var map = new mapboxgl.Map({
                   container: 'map', // container id
                   style: 'mapbox://styles/mapbox/streets-v11', // style URL
-                  center: [-84.389400, 33.776810], // starting position [lng, lat]
+                  center: [lon, lat], // starting position [lng, lat]
                   zoom: 13 // starting zoom
                 });
 
+
                 colorList = ["#39A96B", "#56B870", "#74C67A", "#99D492", "#BFE1B0"];
                 colorIndex = 0;
-                for (let key in recs) {
+                for (let k in sorted_recs) {
+                  key = sorted_recs[k][0]
                   // console.log(recs[key]["longitude"][0])
                   var marker1 = new mapboxgl.Marker({color: colorList[colorIndex]})
                     .setLngLat([recs[key]["longitude"][0], recs[key]["latitude"][0]])
@@ -86,7 +115,7 @@ body { margin: 0; padding: 0; }
                   colorIndex++;
                 }
 
-                document.getElementById("searchConfirmation").innerHTML = "Displaying recommendations for " + zip + ".";
+                document.getElementById("searchConfirmation").innerHTML = "Displaying the top 5 recommendations for " + zip + ".";
             })
 
         })
