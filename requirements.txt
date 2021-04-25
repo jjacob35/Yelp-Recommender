@@ -37,8 +37,6 @@ scikit-surprise==1.1.1
 scipy==1.4.1
 six==1.15.0
 SQLAlchemy==1.4.11
-torch==1.8.1
-torchvision==0.9.1
 tornado==6.0.4
 tqdm==4.59.0
 traitlets==5.0.5
