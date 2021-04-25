@@ -17,6 +17,8 @@ main = Blueprint('main', __name__)
 
 REC = YelpRecommender()
 
+data = pd.read_csv('data/business_list.csv')
+
 
 @main.route('/')
 def inital_load():
@@ -61,15 +63,22 @@ def getrecs():
     recs = REC.getRecommendation(user_ndxs, item_ndxs)
     # item, rating = REC.getRecommendation(user_ndxs, item_ndxs)
     # print(le_item.inverse_transform([item]).item())
-    data = pd.read_csv('data/business_list.csv')
+    # data = pd.read_csv('data/business_list.csv')
+    preds_list = list(recs.reshape((1,7))[0])
+    business_rating = []
+    for i in range(len(preds_list)):
+        business_rating.append((items[i], preds_list[i]))
+    
+    business_rating = sorted(business_rating, key=lambda x:x[1], reverse=True)
+
     out_json = {}
     for i in range(numRes):
-        if i == len(recs):
+        if i == len(business_rating):
             break
-        item, rating = recs[i]
-        new_business_id = le_item.inverse_transform([item]).item()
+        new_business_id, rating = business_rating[i]
+        # new_business_id = le_item.inverse_transform([item]).item()
         q1 = """SELECT * FROM data WHERE business_id = '{}' """.format(new_business_id)
-        result = ps.sqldf(q1, locals())
+        result = ps.sqldf(q1, globals())
         json_result = result.to_dict()
         json_result["reccomendation_level"] = float(rating)
         out_json[new_business_id] = json_result
@@ -101,7 +110,7 @@ def get_details():
 
     found = False
     q1 = """SELECT * FROM data WHERE business_id = '{}' """.format(business_id)
-    result = ps.sqldf(q1, locals())
+    result = ps.sqldf(q1, globals())
     json_result = result.to_json()
     if result.shape[0] == 0:
         return 'Cannot find details for that business_id'
@@ -121,10 +130,10 @@ def get_details():
 def getLocations():
     zipcode = request.args.get('zipcode')
 
-    data = pd.read_csv('data/business_list.csv')
+    # data = pd.read_csv('data/business_list.csv')
     q1 = """SELECT * FROM data WHERE postal_code = '{}' """.format(zipcode)
 
-    result = ps.sqldf(q1, locals())
+    result = ps.sqldf(q1, globals())
     result = result['business_id']
     json_result = result.to_json()
     if result.shape[0] == 0:
