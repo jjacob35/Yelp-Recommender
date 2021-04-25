@@ -1,4 +1,5 @@
 from flask import Blueprint, request
+from flask import Flask, render_template
 from .utils.YelpRecommender import *
 import logging
 import json
@@ -23,6 +24,8 @@ data = pd.read_csv('data/business_list.csv')
 @main.route('/')
 def inital_load():
     return 'Hi, the server is up and running'
+    # return render_template('../templates/index.html')
+
 
 
 # I don't think we need the following route, we should just let the model use the path to the filtered csv dataset
