@@ -62,7 +62,20 @@ def getrecs():
     # payload is inital parameters
     item, rating = REC.getRecommendation(user_ndxs, item_ndxs)
     print(le_item.inverse_transform([item]).item())
-    return "%s,%.2f" % (le_item.inverse_transform([item]).item(), rating)
+
+    new_business_id = le_item.inverse_transform([item]).item()
+    data = pd.read_csv('data/business_list.csv')
+    q1 = """SELECT * FROM data WHERE business_id = '{}' """.format(new_business_id)
+    result = ps.sqldf(q1, locals())
+    json_result = result.to_dict()
+    print(json_result)
+
+    json_result_dict = {}
+    json_result_dict["info"] = json_result
+    json_result["reccomendation_level"] = float(rating)
+
+
+    return json_result
 
 
 # Endpoint to get Details for a Resturant
@@ -78,7 +91,7 @@ def get_details():
     # payload is resturant business id
     business_id = request.args.get('business_id')
 
-    data = pd.read_csv('data/business_list.csv')
+
     counter = 0
 
     found = False
