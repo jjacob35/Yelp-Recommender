@@ -19,3 +19,10 @@ Georgia Tech CSE 6242 Final Project
 5) change variable BASE_URL in index.html to "http://127.0.0.1"
 
 
+DESCRIPTION
+This package contains everything related to our CS 6242 Yelp Recommender Project. The /api/ folder contains the core part of our backend of our project. Our API is written in main.py and that's where you'll find the implementation of all of our requests. Inside /api/utils/ folder you can find 
+
+
+INSTALLATION
+
+EXECUTION
