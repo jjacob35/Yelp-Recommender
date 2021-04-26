@@ -29,6 +29,8 @@ body { margin: 0; padding: 0; }
   <br />
   <div id="map"></div>
   <script>
+      baseURL = "http://3.235.163.7" // SWAP TO http://127.0.0.1 FOR LOCAL TESTING
+
   	  mapboxgl.accessToken = 'pk.eyJ1IjoianBoaWxpcG9zZTMiLCJhIjoiY2tuM3k2dTBmMWM2MTJwbzhsZzQwMXN4aCJ9.uGgJiraPNEWlG0d25SYJLg';
       var map = new mapboxgl.Map({
         container: 'map', // container id
@@ -44,7 +46,7 @@ body { margin: 0; padding: 0; }
 
         itemList = ""
 
-        axios.get('http://3.235.163.7:5000/api/getLocationsBasedOnZipcode', {
+        axios.get(baseURL + ':5000/api/getLocationsBasedOnZipcode', {
           params: {
             zipcode: zip
           }
@@ -63,7 +65,7 @@ body { margin: 0; padding: 0; }
 
 
             n_results = 5
-            axios.get('http://3.235.163.7:5000/api/getReccomendations', {
+            axios.get(baseURL + ':5000/api/getReccomendations', {
               params: {
                 users: names,//"b_-AmmH9I3lvhU7PANjFrw,OhOgtmlIWSmikT25wcWBpA,8q7-9Lv6NTlOLqnm5Yk0hg,94u9RZbO2AKAGV-sXLjX4w",
                 items: itemList,
