@@ -16,6 +16,6 @@ Georgia Tech CSE 6242 Final Project
 2) go to directory that the dockerfile is located at, i.e Yelp-Recommender/
 3) docker build -t cse6242:yelprec .
 4) docker run -d -p 5000:5000 cse6242:yelprec
-5) change variable BASE_URL in index.html to "localhost:5000"
+5) change variable BASE_URL in index.html to "http://127.0.0.1"
 
 
